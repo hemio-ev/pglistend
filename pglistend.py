@@ -15,12 +15,12 @@ parser = argparse.ArgumentParser(
     fromfile_prefix_chars = "@"
 )
 
-parser.add_argument('--channels', metavar='channel', type=str, nargs='+')
-parser.add_argument('--signal-action-maps', metavar='map', required=True, type=str, nargs='+',
+parser.add_argument('--channels', metavar='<channel>', required=True, type=str, nargs='+')
+parser.add_argument('--signal-action-maps', metavar='<map>', required=True, type=str, nargs='+',
         help="maps of the form signal_name=exec")
-parser.add_argument('--reconnect-delay', metavar='seconds', type=int, default=10)
-parser.add_argument('--dsn', metavar='map', type=str, help="Database dsn (potgresql://...)")
-parser.add_argument('--warn-missing-connection', metavar='minutes', type=int)
+parser.add_argument('--reconnect-delay', metavar='<seconds>', type=int, default=10)
+parser.add_argument('--dsn', metavar='<dsn>', required=True, type=str, help="Database dsn (potgresql://...)")
+parser.add_argument('--warn-missing-connection', metavar='<minutes>', type=int)
 
 args = parser.parse_args()
 
