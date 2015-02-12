@@ -46,8 +46,6 @@ ch.setLevel(logging.DEBUG)
 ch.setFormatter(logging.Formatter("<%(severity)s> <%(levelname)s> %(message)s"))
 log.addHandler(ch)
 
-log.error("test")
-
 connection_lost = None
 
 maps = {}
