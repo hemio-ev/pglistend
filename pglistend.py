@@ -11,7 +11,7 @@ import logging
 import datetime
 
 parser = argparse.ArgumentParser(
-    prog = "genconfpgnotifyd",
+    prog = "pglistend",
     fromfile_prefix_chars = "@"
 )
 
@@ -24,7 +24,30 @@ parser.add_argument('--warn-missing-connection', metavar='minutes', type=int)
 
 args = parser.parse_args()
 
-logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s', level=logging.DEBUG)
+""" Logging """
+
+class AppFilter(logging.Filter):
+    def filter(self, record):
+        states = {
+            logging.CRITICAL : 2,
+            logging.ERROR : 3,
+            logging.WARNING : 4,
+            logging.INFO : 6,
+            logging.DEBUG : 7
+        }
+        record.severity = states[record.levelno]
+        return True
+
+log = logging.Logger('pg')
+log.addFilter(AppFilter())
+
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+ch.setFormatter(logging.Formatter("<%(severity)s> <%(levelname)s> %(message)s"))
+log.addHandler(ch)
+
+log.error("test")
+
 connection_lost = None
 
 maps = {}
@@ -32,7 +55,7 @@ for mapping in args.signal_action_maps:
     signal, action = map(lambda x: x.strip(), mapping.split('='))
     
     if not os.path.isfile(action) or not os.access(action, os.X_OK):
-        logging.critical(
+        log.critical(
                 "The path '{0}' does not represent an executable file"
                 .format(action)
         )
@@ -47,52 +70,55 @@ def wait_for_notifications():
     conn = psycopg2.connect(args.dsn)
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 
-    logging.info("Connected to postgresql server")
+    log.info("Connected to postgresql server")
 
     cur = conn.cursor()
     for channel in args.channels:
         cur.execute('LISTEN "{channel}";'.format(channel=channel))
-        logging.info("Listening to channel '{channel}'".format(channel=channel))
+        log.info("Listening to channel '{channel}'".format(channel=channel))
 
     connection_lost = None
 
     while True:
         select.select([conn],[],[])
-        logging.debug("Incomming data")
+        log.debug("Incomming data")
         conn.poll()
         while conn.notifies:
             notify = conn.notifies.pop()
             signal = notify.payload
-            logging.debug("Got signal on channel '{channel}', action '{signal}'".format(
+            log.debug("Got signal on channel '{channel}', action '{signal}'".format(
                     channel = notify.channel,
                     signal = signal
             ))
             if signal in maps:
                 for action in maps[signal]:
-                    logging.info("Executing '{action}'".format(action=action))
-                    os.system(action)
+                    log.info("Executing '{action}'".format(action=action))
+                    status = os.system(action)
+                    if status:
+                        log.error("Exit status '{status}' of '{action}'"
+                                .format(action=action,status=os.WEXITSTATUS(status)))
 
 while True:
     try:
         wait_for_notifications()
     except psycopg2.OperationalError:
-        logging.debug("psycopg2.OperationalError, connection lost")
+        log.debug("psycopg2.OperationalError, connection lost")
 
         if not connection_lost:
             connection_lost = datetime.datetime.now()
             last_report = datetime.datetime.now()
-            logging.info("Connection to postgresql server lost")
+            log.info("Connection to postgresql server lost")
 
         else:
             delta = datetime.datetime.now() - connection_lost
             report_delta = datetime.datetime.now() - last_report
             if (report_delta.seconds >= 60*args.warn_missing_connection):
                 last_report = datetime.datetime.now()
-                logging.warning("Not connected since {0} (duration)".format(delta))
-                logging.info("Reporting again in {0} minutes".format(1))
+                log.warning("Not connected since {0} (duration)".format(delta))
+                log.info("Reporting again in {0} minutes".format(1))
             
-        logging.debug("waiting {0}s before trying to reconnect"
+        log.debug("waiting {0}s before trying to reconnect"
                 .format(args.reconnect_delay))
         time.sleep(args.reconnect_delay)
-        logging.debug("trying to reconnect")
+        log.debug("trying to reconnect")
 

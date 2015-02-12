@@ -1,0 +1,10 @@
+[Unit]
+Description=Performs actions on postgresql NOTIFY signals
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/pglistend
+
+[Install]
+WantedBy=multi-user.target
+
