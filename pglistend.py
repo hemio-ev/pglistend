@@ -43,7 +43,7 @@ log.addFilter(AppFilter())
 
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
-ch.setFormatter(logging.Formatter("<%(severity)s> <%(levelname)s> %(message)s"))
+ch.setFormatter(logging.Formatter("<%(severity)s><%(levelname)s> %(message)s"))
 log.addHandler(ch)
 
 connection_lost = None
