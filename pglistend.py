@@ -29,7 +29,6 @@ for mapping in args.signal_action_maps:
 
     maps[signal].append(action)
 
-
 while True:
     try:
         utils.wait_for_notifications(args, maps)
@@ -47,7 +46,7 @@ while True:
             if (report_delta.seconds >= 60*args.warn_missing_connection):
                 last_report = datetime.datetime.now()
                 log.warning("Not connected since {0} (duration)".format(delta))
-                log.info("Reporting again in {0} minutes".format(1))
+                log.info("Reporting again in {0} minutes".format(args.warn_missing_connection))
             
         log.debug("waiting {0}s before trying to reconnect"
                 .format(args.reconnect_delay))

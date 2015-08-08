@@ -9,6 +9,8 @@ import fnmatch
 from pglisten.logging import log
 
 def wait_for_notifications(args, maps):
+    global connection_lost
+
     conn = psycopg2.connect(args.dsn)
     conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 
