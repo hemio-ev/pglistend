@@ -2,9 +2,9 @@ Usage
 =====
 
 If using the *pglistend* executable, the following options can be
-configured in */etc/pglistend.conf*. See *examples* folder for an config
-and systemd service example. The following options might be used in the
-config, or on the commandline if *pglistend.py* is used.
+configured in */etc/pglistend.conf*. See *examples* folder for an example config
+and a systemd service example. The following options might be used in the
+config, or on the command line if *pglistend.py* is used.
 
     usage: pglistend [-h] --channels <channel> [<channel> ...]
                      --signal-action-maps <map> [<map> ...]
