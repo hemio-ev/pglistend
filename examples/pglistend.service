@@ -3,7 +3,7 @@ Description=Performs actions on postgresql NOTIFY signals
 Wants=network-online.target
 
 [Service]
-ExecStart=/usr/local/bin/pglistend
+ExecStart=/usr/local/sbin/pglistend
 
 [Install]
 WantedBy=multi-user.target
