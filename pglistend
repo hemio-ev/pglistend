@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-DIR=$( readlink --canonicalize-existing "${DIR}" )
+FILE=$( readlink --canonicalize-existing "${BASH_SOURCE[0]}" )
+DIR=$( cd "$( dirname "${FILE}" )" && pwd )
 ${DIR}/pglistend.py @/etc/pglistend.conf
 
