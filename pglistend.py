@@ -14,13 +14,14 @@ connection_lost = None
 maps = {}
 # parse <signal> = <exec> format in signal_action_maps
 for mapping in args.signal_action_maps:
-    signal, action = map(lambda x: x.strip(), mapping.split('='))
+    signal, action = map(lambda x: x.strip(), mapping.split('=', 1))
     
     # check if the action can be executed
-    if not os.path.isfile(action) or not os.access(action, os.X_OK):
+    executable = action.split()[0]
+    if not os.path.isfile(executable) or not os.access(executable, os.X_OK):
         log.critical(
                 "The path '{0}' does not represent an executable file"
-                .format(action)
+                .format(executable)
         )
         sys.exit(1)
 
