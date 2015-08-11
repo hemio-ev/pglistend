@@ -1,10 +1,19 @@
+pglistend
+=========
+
+A daemon executing configured actions on PostgreSQL NOTIFY signals.
+
+Source: <https://git.hemio.de/hemio/pglistend/> PostgreSQL NOTIFY
+signals: <http://www.postgresql.org/docs/current/static/sql-notify.html>
+
 Usage
-=====
+-----
 
 If using the *pglistend* executable, the following options can be
-configured in */etc/pglistend.conf*. See *examples* folder for an example config
-and a systemd service example. The following options might be used in the
-config, or on the command line if *pglistend.py* is used.
+configured in */etc/pglistend.conf*. See *examples* folder for an
+example config and a systemd service example. The following options
+might be used in the config, or on the command line if *pglistend.py* is
+used.
 
     usage: pglistend [-h] --channels <channel> [<channel> ...]
                      --signal-action-maps <map> [<map> ...]
@@ -23,7 +32,9 @@ config, or on the command line if *pglistend.py* is used.
       --warn-missing-connection <minutes>
       --max-sleep <seconds>
 
+This information is the output of `pglistend.py -h`.
+
 Required Debian Packages
-========================
+------------------------
 
     apt install python3 python3-psycopg2
