@@ -3,6 +3,7 @@
 import psycopg2
 import time
 import os
+import shutil
 import sys
 import datetime
 import pglisten.utils as utils
@@ -18,9 +19,9 @@ for mapping in args.signal_action_maps:
     
     # check if the action can be executed
     executable = action.split()[0]
-    if not os.path.isfile(executable) or not os.access(executable, os.X_OK):
+    if shutil.which(executable) is None:
         log.critical(
-                "The path '{0}' does not represent an executable file"
+                "The path/binary '{0}' does not represent an executable file"
                 .format(executable)
         )
         sys.exit(1)
